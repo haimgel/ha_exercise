@@ -1,0 +1,50 @@
+
+- content_for :title, 'Device types'
+- content_for :breadcrumbs, { '/' => 'Home', '/admin' => 'Admin' }
+
+.ui.container{style: 'padding: 2em 1em 1em 1em'}
+  %h1.ui Registered device types
+
+  .ui.segments
+    .ui.segment
+      .ui.middle.aligned.divided.huge.list
+        - device_types.each do |dt|
+          .item
+            .left.floated.content{style: 'margin-top: 0.5em'}
+              = dt[:name]
+            .right.floated.content{style: 'margin-bottom: 0.25em'}
+              %a.ui.icon.blue.button{href: "device_types/#{dt.id}"}
+                %i.icon.setting.white
+              %a.ui.icon.red.button{:onclick => "deleteDeviceType(#{dt.id})"}
+                %i.icon.delete.white
+
+    .ui.segment.secondary
+      .ui.middle.aligned.list
+        .item
+          .right.floated.content
+            %a.ui.blue.button{href: 'device_types/new'}
+              Add new
+
+%form#delete-form{action: '', method: 'POST'}
+  %input{type: 'hidden', name: '_method', value: 'DELETE'}
+
+#delete-dialog.ui.modal
+  .header Are you sure?
+  .content
+    Remove this device type? All associated devices will be deleted as well.
+  .actions
+    .ui.primary.approve.button Delete device type
+    .ui.secondary.cancel.button Cancel
+
+:javascript
+  function deleteDeviceType(id) {
+    $('#delete-dialog')
+      .modal({
+        onApprove: function() {
+          var form = $('form#delete-form');
+          form.attr('action', '/admin/device_types/' + id);
+          form.submit();
+        }
+      })
+      .modal('show');
+  }

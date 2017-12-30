@@ -1,0 +1,7 @@
+.bundle
+.env*
+.idea
+.sass-cache
+db/*.sqlite*
+log/*.log*
+vendor/bundle

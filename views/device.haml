@@ -1,0 +1,36 @@
+
+- content_for :title, device.name
+- if request.path.start_with?('/admin')
+  - content_for :breadcrumbs, { '/' => 'Home', '/admin' => 'Admin', '/admin/devices' => 'Devices' }
+- else
+  - content_for :breadcrumbs, { '/' => 'Home' }
+
+#network-error-message.ui.error.message.attached.transition.hidden
+  %i.close.icon
+  .header
+    Error!
+  %p#network-error-text
+
+#ha-controls.ui.container{style: 'padding: 2em 1em 1em 1em'}
+  %form.form.ui
+    .ui.segments
+      - device.controls.each do |control|
+        - value = device.get_value(control)
+        .ui.segment.control-element
+          - if control.kind == 'button'
+            %button.ui.button.primary.fluid.button-ha-control{'data-id' => control.id, 'data-device-id' => device.id}= control.name
+          - elsif control.kind == 'slider'
+            %div.field
+              %label= control.name
+              .ui.range.range-ha-control{'data-id' => control.id, 'data-device-id' => device.id, 'data-value' => value.to_i}
+          - elsif control.kind == 'select'
+            %div.field.floated.wide
+              %label.ui.bold= control.name + ': '
+              %select.ui.dropdown.floated.wide.select-ha-control{'data-id' => control.id, 'data-device-id' => device.id}
+                - control.selectable.each do |sel|
+                  %option{value: sel, selected: sel == value}= sel
+
+:javascript
+  $(document).ready(function(){
+    startDeviceWebsocket();
+  });

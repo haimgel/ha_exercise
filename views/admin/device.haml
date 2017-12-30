@@ -1,0 +1,31 @@
+
+- content_for :title, 'Configure device'
+- content_for :breadcrumbs, { '/' => 'Home', '/admin' => 'Admin', '/admin/devices' => 'Devices' }
+
+.ui.container{style: 'padding: 2em 1em 1em 1em'}
+  %h1.ui Configure device
+
+  .ui.segments
+
+    .ui.segment
+      %form.ui.form{action: '', method: 'post'}
+        %input{type: 'hidden', name: '_method', value: device.id.nil? ? 'POST' : 'PUT'}
+
+        .field
+          %label Name:
+          %input{type: 'text', name: 'device[name]', placeholder: 'Device type name', value: device[:name]}
+
+        .field
+          %label REST URL prefix:
+          %input{type: 'text', name: 'device[rest_url_prefix]', placeholder: 'REST URL prefix (optional)', value: device[:rest_url_prefix]}
+
+        .field
+          %label Device type:
+          %select.ui.dropdown{name: 'device[device_type_id]'}
+            - device_types.each do |dt|
+              %option{value: dt.id, selected: (device[:device_type_id] == dt.id) }= dt.name
+
+        %button.ui.primary.button
+          Save device
+        %button.ui.secondary.button{onclick: "event.preventDefault(); location.href = '/admin/devices'"}
+          Cancel

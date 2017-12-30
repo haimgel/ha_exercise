@@ -1,0 +1,86 @@
+
+- content_for :title, 'Edit device type'
+- content_for :breadcrumbs, { '/' => 'Home', '/admin' => 'Admin', '/admin/device_types' => 'Device types' }
+
+.ui.container{style: 'padding: 2em 1em 1em 1em'}
+
+  %h1.ui Edit device type
+
+  .ui.segments
+
+    .ui.segment
+      %form.ui.form{action: '', method: 'post'}
+        %input{type: 'hidden', name: '_method', value: (device_type.new? || device_type.id.nil?) ? 'POST' : 'PUT'}
+
+        .field
+          %label Name:
+          %input{type: 'text', name: 'device_type[name]', placeholder: 'Device type name', value: device_type[:name]}
+
+        %h3 Controls
+        %table.ui.celled.padded.table
+          %thead
+            %tr
+              %th.six.wide Name
+              %th.two Type
+              %th.six.wide Properties
+              %th.one
+
+          %tbody
+            - device_type.control_types.each do |control_type|
+              = partial('admin/device_type_controls', locals: {idx: nil, control_type: control_type})
+
+          %tfoot
+            %tr
+              %th{colspan: 4}
+                .ui.button.add-control{:style => 'float: right'}
+                  Add new control
+
+        %button.ui.primary.button
+          Save device type
+        %a.ui.secondary.button{href: '/admin/device_types'}
+          Cancel
+
+.hidden
+  %table
+    = partial('admin/device_type_controls', locals: {idx: 'new', control_type: {id: nil, name: 'New Control'}})
+
+
+
+:javascript
+  /*
+  function controlSelectionChanged(select) {
+    $(select).parents('tr').find('.selectable-items').toggleClass('hidden', select.value !== 'select');
+  }
+  function addSelectableItem(item) {
+    var lastItem = $(item).parents('tr').find(".selectable-items div.ui.input:last");
+    var newItem = lastItem.clone(true);
+    newItem.find('input').val('');
+    newItem.toggleClass('fade-in', true);
+    newItem.insertAfter(lastItem);
+  }
+
+  function deleteSelectableItem(item) {
+    var thisItem = $(item).parents('div.ui.input');
+    var otherItems = thisItem.parent().find('div.ui.input');
+    if (otherItems.length > 1) {
+      thisItem.remove();
+    }
+  }
+
+  function deleteControl(item, event) {
+    var thisItem = $(item).parents('tr');
+    var otherItems = thisItem.parent('tbody').find('tr');
+    if (otherItems.length > 1) {
+      thisItem.remove();
+    }
+    event.preventDefault();
+  }
+
+  function addNewControl(item, event) {
+    var parent = $(item).parents('table').find('tbody');
+    var newItem = $('#control-new').clone(true).attr('id', null);
+    parent.append(newItem);
+    event.preventDefault();
+  }
+  */
+

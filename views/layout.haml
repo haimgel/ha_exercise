@@ -1,0 +1,41 @@
+-# layout.haml
+%html
+  %head
+    %title= content_for :title
+    %meta{name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1'}
+    %link{rel: :stylesheet, type: 'text/css', href: '/semantic-ui/semantic.css'}
+    %link{rel: :stylesheet, type: 'text/css', href: '/semantic-ui/range.css'}
+    %script{src: '/js/jquery-3.2.1.js'}
+    %script{src: '/semantic-ui/semantic.js'}
+    %script{src: '/semantic-ui/range.js'}
+
+    = assets(:css)
+    = assets(:js)
+
+  %body
+    #main
+      .ui.black.message.attached
+        .ui.breadcrumb.big
+          - (content_for(:breadcrumbs) || {}).each do |url,name|
+            %a.section{href: url}= name
+            .divider
+              %i.right.chevron.icon.grey
+          .active.section= content_for :title
+
+      - if flash[:error]
+        .ui.message.attached.red
+          %h3 Error
+          %ul
+          - flash[:error].each do |err|
+            %li= err
+      - if flash[:success]
+        .ui.message.attached.green
+          - if flash[:success].is_a?(Array)
+            %ul
+            - flash[:success].each do |err|
+              %li= err
+          - else
+            %p= flash[:success].to_s
+
+      = yield
+

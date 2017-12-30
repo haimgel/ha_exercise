@@ -1,0 +1,15 @@
+
+- content_for :title, 'Select device to control'
+- content_for :breadcrumbs, { }
+
+.ui.container{style: 'padding: 2em 1em 1em 1em'}
+
+  .ui.segments
+    - devices.each do |dev|
+      .ui.segment
+        %a.ui.button.huge.primary.fluid{href: "/devices/#{dev.id}"}
+          = dev[:name]
+
+
+  %a{href: '/admin', style: 'float: right;'} Administration
+

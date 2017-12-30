@@ -1,0 +1,54 @@
+
+- content_for :title, 'Devices'
+- content_for :breadcrumbs, { '/' => 'Home', '/admin' => 'Admin' }
+
+.ui.container{style: 'padding: 2em 1em 1em 1em'}
+  %h1.ui Registered devices
+
+  .ui.segments
+    .ui.segment
+      .ui.middle.aligned.divided.huge.list
+        - devices.each do |dev|
+
+          .item
+            .left.floated.content{style: 'margin-top: 0.5em'}
+              %a{href: "devices/#{dev.id}/show"}= dev[:name]
+            .right.floated.content{style: 'margin-bottom: 0.25em'}
+              %a.ui.icon.blue.button{href: "devices/#{dev.id}/show"}
+                %i.icon.edit.white
+              %a.ui.icon.blue.button{href: "devices/#{dev.id}"}
+                %i.icon.setting.white
+              %a.ui.icon.red.button{:onclick => "deleteDevice(#{dev.id})"}
+                %i.icon.delete.white
+
+    .ui.segment.secondary
+      .ui.middle.aligned.list
+        .item
+          .right.floated.content
+            %a.ui.blue.button{href: 'devices/new'}
+              Add new
+
+
+%form#delete-form{action: '', method: 'POST'}
+  %input{type: 'hidden', name: '_method', value: 'DELETE'}
+
+#delete-dialog.ui.modal
+  .header Are you sure?
+  .content
+    Remove this device?
+  .actions
+    .ui.primary.approve.button Delete device
+    .ui.secondary.cancel.button Cancel
+
+:javascript
+  function deleteDevice(id) {
+    $('#delete-dialog')
+      .modal({
+        onApprove: function() {
+          var form = $('form#delete-form');
+          form.attr('action', '/admin/devices/' + id);
+          form.submit();
+        }
+      })
+      .modal('show');
+  }
