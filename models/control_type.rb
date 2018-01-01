@@ -60,7 +60,7 @@ class ControlType < Sequel::Model
     return true if rest_path.to_s.empty? || rest_verb.to_s.empty? || device.rest_url_prefix.to_s.empty?
 
     # This URI 'assembly' is questionable (no auto-adding of path delimiter, no default HTTP, etc.).
-    # It is the most flexibile, though.
+    # It is the most flexible, though.
     uri = device.rest_url_prefix + rest_path
     Log.info("Sending '#{rest_verb}' request to '#{uri}'")
     response = RestClient::Request.execute(method: rest_verb.upcase, url: uri, timeout: 10)

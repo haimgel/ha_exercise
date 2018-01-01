@@ -33,11 +33,11 @@ real application.
 
  * Upon an unsuccessful API call, the application currently just displays a message with an exception message, verbatim,
 in the UI. In a real world application, most common failure modes should be investigated, and their specific messages
-amended with specific instructions to the user how to resolve this spefific problem. (e.g. "plug the TV in" on
+amended with specific instructions to the user how to resolve this specific problem. (e.g. "plug the TV in" on
 a timeout error).
 
  * The application still should have a mechanism to reset all settings to "factory defaults", both manually and when
- an unrecoverable database corruption is detected (even though SQLite is pretty resilient, this still can happen).
+ an unrecoverable database corruption is detected.
 
 ### Websockets
 

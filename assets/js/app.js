@@ -10,3 +10,14 @@ $(document).ready(function(){
         });
 
 });
+
+jQuery.fn.flash = function(color) {
+    var element = this;
+    element.toggleClass('highlighted-' + color + ' highlighted-transition', true);
+    setTimeout(function() {
+        element.toggleClass('highlighted-' + color, false);
+        setTimeout(function() {
+            element.toggleClass('highlighted-transition', false);
+        }, 300);
+    }, 300);
+};

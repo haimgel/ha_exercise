@@ -42,7 +42,7 @@ $(document).ready(function(){
         $.post('/devices/' + element.data('device-id'), {control: id, value: value, _csrf: csrf_token})
             .done(function(data) {
                 // Optionally make a visual indication that the change has been successful
-                // $(element).fadeTo(150, 0.5, function() { $(this).fadeTo(500, 1.0); });
+                element.flash('green');
                 if ($('#network-error-message').transition('is visible')) {
                     $('#network-error-text').html('');
                     $('#network-error-message').transition('fade out');
@@ -71,9 +71,19 @@ function startDeviceWebsocket() {
             var element = $(this);
             if (element.data('value') != String(msg.value)) {
                 element.range('set value', msg.value);
+                element.flash('yellow');
             }
         });
-        $('select.select-ha-control' + selector).val(msg.value);
-        $('span.show-ha-control' + selector).fadeTo(300, 0, function() { $(this).text(msg.value).fadeTo(300, 1.0); });
+        $('select.select-ha-control' + selector).each(function () {
+            var element = $(this);
+            if (element.val() != String(msg.value)) {
+                element.val(msg.value);
+                element.flash('yellow');
+            }
+        });
+
+        var textElement = $('span.show-ha-control' + selector);
+        textElement.text(msg.value);
+        textElement.flash('yellow');
     };
 }

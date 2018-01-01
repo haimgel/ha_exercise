@@ -20,3 +20,16 @@
     opacity: 1;
   }
 }
+
+.highlighted-yellow {
+  background-color: #FFF13B !important;
+}
+
+.highlighted-green {
+  background-color: #66FF85 !important;
+}
+
+.highlighted-transition {
+  transition: color 0.25s ease, background-color 0.5s ease  !important;
+}
+
