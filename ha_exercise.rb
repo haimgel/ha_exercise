@@ -4,7 +4,6 @@ require_relative 'config/environment'
 Dir['./models/**/*.rb'].each { |rb| Unreloader.require rb }
 
 require 'faye/websocket'
-require 'eventmachine'
 Faye::WebSocket.load_adapter('thin')
 
 
@@ -17,8 +16,8 @@ class App < Roda
   plugin :render,
          engine: 'haml',
          views: 'views',
-         template_opts: { default_encoding: 'UTF-8' }
-
+         template_opts: { default_encoding: 'UTF-8', escape_html: true }
+  plugin :csrf, raise: true
   plugin :public
   plugin :partials, views: 'views'
   plugin :assets, css: %w[app.scss], js: %w[app.js view_device.js edit_device_type.js]
@@ -43,14 +42,22 @@ class App < Roda
   route do |r|
 
     if Faye::WebSocket.websocket?(env)
+
       # Websocket routing
-      r.on 'devices' do
-        r.is Integer do |id|
-          @device = Device[id]
-          r.halt websocket_handler(@device, Faye::WebSocket.new(env))
-        end
+      r.on 'devices', Integer do |id|
+        @device = Device[id]
+        r.halt websocket_handler(@device, Faye::WebSocket.new(env))
       end
+      r.on 'admin/devices', Integer, 'show' do |id|
+        @device = Device[id]
+        r.halt websocket_handler(@device, Faye::WebSocket.new(env))
+      end
+      r.is 'admin/devices' do
+        r.halt websocket_handler(nil, Faye::WebSocket.new(env))
+      end
+
     else
+
       # Regular HTTP routing
       r.assets
       r.public
@@ -58,6 +65,7 @@ class App < Roda
       r.root do
         r.redirect '/devices'
       end
+
     end
 
   end

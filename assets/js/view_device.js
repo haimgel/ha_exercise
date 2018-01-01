@@ -38,10 +38,15 @@ $(document).ready(function(){
 
     function setControl(element, id, value) {
         console.debug('Setting ', id, ' to ', value);
-        $.post('/devices/' + element.data('device-id'), {control: id, value: value})
+        var csrf_token = $('meta[name="_csrf"]').attr('content');
+        $.post('/devices/' + element.data('device-id'), {control: id, value: value, _csrf: csrf_token})
             .done(function(data) {
                 // Optionally make a visual indication that the change has been successful
                 // $(element).fadeTo(150, 0.5, function() { $(this).fadeTo(500, 1.0); });
+                if ($('#network-error-message').transition('is visible')) {
+                    $('#network-error-text').html('');
+                    $('#network-error-message').transition('fade out');
+                }
             })
             .fail(function(data) {
                 console.debug('setControl fail: ', data);
@@ -69,5 +74,6 @@ function startDeviceWebsocket() {
             }
         });
         $('select.select-ha-control' + selector).val(msg.value);
+        $('span.show-ha-control' + selector).fadeTo(300, 0, function() { $(this).text(msg.value).fadeTo(300, 1.0); });
     };
 }

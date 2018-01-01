@@ -1,39 +1,42 @@
 
-%tr{id: idx ? "control-#{idx}" : nil}
-  %td
-    %input{type: 'text', name: "device_type[control_types][][name]", placeholder: 'Control name', value: control_type[:name]}
-  %td
-    %select.ui.dropdown.control-type{name: "device_type[control_types][][kind]"}
-      %option{value: 'button', selected: control_type[:kind] == 'button'} Button
-      %option{value: 'slider', selected: control_type[:kind] == 'slider'} Slider
-      %option{value: 'select', selected: control_type[:kind] == 'select'} Selection
+.ui.black.segment.clearing.one-control
+  .two.fields
+    .field.twelve.wide
+      %label Name:
+      %input{type: 'text', name: 'device_type[control_types][][name]', placeholder: 'Control name', value: control_type[:name]}
+    .field.five.wide
+      %label Type:
+      %select.ui.dropdown.control-type{name: 'device_type[control_types][][kind]'}
+        %option{value: 'button', selected: control_type[:kind] == 'button'} Button
+        %option{value: 'slider', selected: control_type[:kind] == 'slider'} Slider
+        %option{value: 'select', selected: control_type[:kind] == 'select'} Selection
 
-  %td
-    .field
-      %label
-        REST request URI path and verb
-      .two.fields
-        .twelve.wide.field
-          %input{type: 'text', name: "device_type[control_types][][rest_path]", placeholder: 'URI path path for REST request', value: control_type[:rest_path]}
-        .five.wide.field
-          %select.ui.dropdown{name: "device_type[control_types][][rest_verb]"}
-            - ControlType::SUPPORTED_REST_VERBS.each do |verb|
-              %option{value: verb, selected: control_type[:rest_verb] == verb}= verb.upcase
+  .field
+    .two.fields
+      .twelve.wide.field
+        %label
+          URI path for REST API request:
+        %input{type: 'text', name: 'device_type[control_types][][rest_path]', placeholder: 'URI path for REST request', value: control_type[:rest_path]}
+      .five.wide.field
+        %label
+          HTTP verb:
+        %select.ui.dropdown{name: 'device_type[control_types][][rest_verb]'}
+          - ControlType::SUPPORTED_REST_VERBS.each do |verb|
+            %option{value: verb, selected: control_type[:rest_verb] == verb}= verb.upcase
 
-    .field.selectable-items{class: control_type[:kind] == 'select' ? '' : 'hidden'}
-      %label Selectable items:
-      - (control_type[:kind] == 'select' ? control_type.selectable : ['']).each do |item|
-        .ui.fluid.action.input{style: 'margin-bottom: 1em'}
-          %input{type: 'text', name: "device_type[control_types][][selectable][]", value: item}
+  .field.selectable-items{class: control_type[:kind] == 'select' ? '' : 'hidden'}
+    %label Selectable items:
+    - (control_type[:kind] == 'select' ? control_type.selectable : ['']).each do |item|
+      .selectable-item
+        .ui.action.input{style: 'margin-bottom: 1em'}
+          %input{type: 'text', name: 'device_type[control_types][][selectable][]', value: item}
           .ui.button.icon.delete-selectable-item
             %i.icon.minus
 
-      .ui.button.icon.add-selectable-item
-        %i.icon.plus
-        Add more
+  .ui.button.icon.add-selectable-item.small.left.floated{class: control_type[:kind] == 'select' ? '' : 'hidden'}
+    %i.icon.plus.green
+    Add more selectable items
 
-  %td
-    .buttons{:style => 'float: right'}
-      .button.ui.delete-control
-        %i.icon.delete
-        Delete
+  .button.ui.delete-control.right.floated.small
+    %i.icon.delete.red
+    Delete control

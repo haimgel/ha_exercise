@@ -6,14 +6,15 @@ class App < Roda
     r.is do
       # View all device types
       r.get do
-        device_types = DeviceType.all
-        view('admin/device_types', locals: { device_types: device_types })
+        view('admin/device_types', locals: { device_types: DeviceType.all })
       end
     end
 
     # /admin/device_types/new
     r.get 'new' do
-      view('admin/device_type', locals: {device_type: DeviceType.new })
+      dt = DeviceType.new
+      dt.control_types << ControlType.new
+      view('admin/device_type', locals: { device_type: dt })
     end
 
     # /admin/devices/new (create)
@@ -40,23 +41,25 @@ class App < Roda
 
       # /admin/device_types/1
       r.get do
-        view('admin/device_type', locals: { device_type: @device_type })
+        view('admin/device_type', locals: { device_type: @device_type }) if @device_type
       end
 
       # /admin/device_types/1 (update)
       r.put do
-        begin
-          DB.transaction do
-            @device_type.name = params[:device_type][:name]
-            @device_type.control_types_dataset.destroy
-            @device_type.control_types_attributes = params[:device_type][:control_types] if params[:device_type][:control_types]
-            @device_type.save
-            flash[:success] = 'Device type saved successfully'
-            r.redirect '/admin/device_types'
+        if @device_type
+          begin
+            DB.transaction do
+              @device_type.name = params[:device_type][:name]
+              @device_type.control_types_dataset.destroy
+              @device_type.control_types_attributes = params[:device_type][:control_types] if params[:device_type][:control_types]
+              @device_type.save
+              flash[:success] = 'Device type saved successfully'
+              r.redirect '/admin/device_types'
+            end
+          rescue Sequel::ValidationFailed
+            flash.now[:error] = @device_type.errors.full_messages + @device_type.control_types.map{ |ct| ct.errors.full_messages }.flatten
+            response.write(view('admin/device_type', locals: { device_type: @device_type }))
           end
-        rescue Sequel::ValidationFailed
-          flash.now[:error] = @device_type.errors.full_messages + @device_type.control_types.map{ |ct| ct.errors.full_messages }.flatten
-          response.write(view('admin/device_type', locals: { device_type: @device_type }))
         end
       end
 

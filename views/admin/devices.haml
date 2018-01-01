@@ -7,12 +7,29 @@
 
   .ui.segments
     .ui.segment
-      .ui.middle.aligned.divided.huge.list
+      .ui.middle.aligned.divided.list
         - devices.each do |dev|
 
           .item
-            .left.floated.content{style: 'margin-top: 0.5em'}
-              %a{href: "devices/#{dev.id}/show"}= dev[:name]
+            .left.floated.content{style: 'margin-top: 0.5em;'}
+              %h2{style: 'margin-bottom: 0.5em;'}
+                %a{href: "devices/#{dev.id}/show"}= dev[:name]
+              %div
+                %a{href: "/admin/device_types/#{dev.device_type.id}"}= dev.device_type.name
+                device, controls are:
+              %ul.device-controls{style: 'margin-top: 0.5em;'}
+                - dev.controls.each do |c|
+                  %li
+                    = "#{c.name} (#{c.kind})"
+                    - if c.slider?
+                      = ' = '
+                      %span.show-ha-control{'data-device-id' => dev.id, 'data-id' => c.id}= dev.get_value(c)
+                      = '%'
+                    - if c.select?
+                      = ' = "'
+                      %span.show-ha-control{'data-device-id' => dev.id, 'data-id' => c.id}= dev.get_value(c)
+                      = '"'
+
             .right.floated.content{style: 'margin-bottom: 0.25em'}
               %a.ui.icon.blue.button{href: "devices/#{dev.id}/show"}
                 %i.icon.edit.white
@@ -31,6 +48,7 @@
 
 %form#delete-form{action: '', method: 'POST'}
   %input{type: 'hidden', name: '_method', value: 'DELETE'}
+  != csrf_tag
 
 #delete-dialog.ui.modal
   .header Are you sure?
@@ -41,6 +59,10 @@
     .ui.secondary.cancel.button Cancel
 
 :javascript
+  $(document).ready(function(){
+    startDeviceWebsocket();
+  });
+
   function deleteDevice(id) {
     $('#delete-dialog')
       .modal({

@@ -47,7 +47,7 @@ class Minitest::HooksSpec
     specify 'display a list of devices' do
       visit('/admin/devices')
       page.current_path.must_equal('/admin/devices')
-      page.all('.item .left.content a').map(&:text).must_equal(['Bedroom Apple TV', 'Livingroom Player', 'Livingroom Lights'])
+      page.all('.item .left.content h2 a').map(&:text).must_equal(['Bedroom Apple TV', 'Livingroom Player', 'Livingroom Lights'])
     end
 
     specify 'display a list of device types' do

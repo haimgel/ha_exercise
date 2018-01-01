@@ -10,6 +10,7 @@
     .ui.segment
       %form.ui.form{action: '', method: 'post'}
         %input{type: 'hidden', name: '_method', value: device.id.nil? ? 'POST' : 'PUT'}
+        != csrf_tag
 
         .field
           %label Name:

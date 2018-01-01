@@ -5,11 +5,12 @@
 $(document).ready(function() {
 
     $('select.control-type').change(function() {
-        $(this).parents('tr').find('.selectable-items').toggleClass('hidden', this.value !== 'select');
+        $(this).parents('.one-control').find('.selectable-items').toggleClass('hidden', this.value !== 'select');
+        $(this).parents('.one-control').find('.add-selectable-item').toggleClass('hidden', this.value !== 'select');
     });
 
     $('.button.add-selectable-item').click(function() {
-        var lastItem = $(this).parents('tr').find(".selectable-items div.ui.input:last");
+        var lastItem = $(this).parents('.one-control').find(".selectable-items .selectable-item:last");
         var newItem = lastItem.clone(true);
         newItem.find('input').val('');
         newItem.toggleClass('fade-in', true);
@@ -17,25 +18,28 @@ $(document).ready(function() {
     });
 
     $('.button.delete-selectable-item').click(function() {
-        var thisItem = $(this).parents('div.ui.input');
-        var otherItems = thisItem.parent().find('div.ui.input');
+        var thisItem = $(this).parents('.selectable-item');
+        var otherItems = thisItem.parent().find('.selectable-item');
         if (otherItems.length > 1) {
             thisItem.remove();
         }
     });
 
     $('.button.delete-control').click(function() {
-        var thisItem = $(this).parents('tr');
-        var otherItems = thisItem.parent('tbody').find('tr');
+        var thisItem = $(this).parents('.one-control');
+        var otherItems = $('#controls').find('.one-control');
         if (otherItems.length > 1) {
             thisItem.remove();
-        }
+            if (otherItems.length == 2) {
+                $('.button.delete-control').toggleClass('disabled', true);
+            }
+        };
     });
 
     $('.button.add-control').click(function() {
-        var parent = $(this).parents('table').find('tbody');
-        var newItem = $('#control-new').clone(true).attr('id', null);
-        parent.append(newItem);
+        var newItem = $('#control-template .one-control').clone(true);
+        $('#controls').append(newItem);
+        $('.button.delete-control').toggleClass('disabled', false);
     });
 
 });
